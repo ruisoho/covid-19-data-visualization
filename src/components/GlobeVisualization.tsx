@@ -9,16 +9,27 @@ interface GlobeVisualizationProps {
 
 const GlobeVisualization: React.FC<GlobeVisualizationProps> = ({ countries, onCountryClick }) => {
   const globeEl = useRef<any>();
-  const [globeWidth, setGlobeWidth] = useState(window.innerWidth);
-  const [globeHeight, setGlobeHeight] = useState(window.innerHeight);
+  const containerRef = useRef<HTMLDivElement>(null);
+  const [globeWidth, setGlobeWidth] = useState(800);
+  const [globeHeight, setGlobeHeight] = useState(600);
 
   useEffect(() => {
+    const updateDimensions = () => {
+      if (containerRef.current) {
+        const rect = containerRef.current.getBoundingClientRect();
+        setGlobeWidth(rect.width);
+        setGlobeHeight(rect.height);
+      }
+    };
+    
     const handleResize = () => {
-      setGlobeWidth(window.innerWidth);
-      setGlobeHeight(window.innerHeight);
+      updateDimensions();
     };
 
     window.addEventListener('resize', handleResize);
+    
+    // Initial dimension update
+    updateDimensions();
 
     if (globeEl.current) {
       globeEl.current.pointOfView({ lat: 20, lng: 0, altitude: 2.5 });
@@ -30,12 +41,15 @@ const GlobeVisualization: React.FC<GlobeVisualizationProps> = ({ countries, onCo
   }, []);
 
   return (
-    <Globe<Country>
-      ref={globeEl}
-      width={globeWidth}
-      height={globeHeight}
-      globeImageUrl="//unpkg.com/three-globe/example/img/earth-day.jpg"
-      pointsData={countries}
+    <div ref={containerRef} style={{ width: '100%', height: '100%' }}>
+      <Globe<Country>
+        ref={globeEl}
+        width={globeWidth}
+        height={globeHeight}
+        globeImageUrl="//unpkg.com/three-globe/example/img/earth-blue-marble.jpg"
+        pointsData={countries}
+        pointMerge={true}
+        pointResolution={8}
       pointLat={(d) => {
         if (!d.countryInfo || typeof d.countryInfo.lat === 'undefined') {
           console.error('Invalid country data for latitude:', d);
@@ -51,14 +65,55 @@ const GlobeVisualization: React.FC<GlobeVisualizationProps> = ({ countries, onCo
         return d.countryInfo.long;
       }}
       pointAltitude={(d) => {
-        return Math.max(0.2, Math.sqrt(d.cases) / 30);
+        // Adaptive scaling based on data range
+        if (d.cases <= 100) {
+          // For percentage data (like HIV coverage)
+          return Math.max(0.02, Math.sqrt(d.cases) / 200);
+        } else if (d.cases <= 100000) {
+          // For disease case counts (like meningitis)
+          return Math.max(0.02, Math.sqrt(d.cases) / 2000);
+        } else {
+          // For large numbers (like COVID)
+          return Math.max(0.02, Math.sqrt(d.cases) / 850000);
+        }
       }}
       pointRadius={(d) => {
-        return Math.max(0.3, Math.sqrt(d.cases) / 200);
+        // Adaptive scaling based on data range
+        if (d.cases <= 100) {
+          // For percentage data (like HIV coverage)
+          return Math.max(0.15, Math.sqrt(d.cases) / 20);
+        } else if (d.cases <= 100000) {
+          // For disease case counts (like meningitis)
+          return Math.max(0.15, Math.sqrt(d.cases) / 100);
+        } else {
+          // For large numbers (like COVID)
+          return Math.max(0.020, Math.sqrt(d.cases) / 4000);
+        }
       }}
       pointColor={(d) => {
-        const intensity = Math.min(d.cases / 1000000, 1);
-        return `rgba(239, 68, 68, ${0.6 + intensity * 0.4})`;
+        const cases = d.cases;
+        
+        // Adaptive color scheme based on data range
+        if (cases <= 100) {
+          // For percentage data (like HIV coverage)
+          if (cases < 25) return '#ef4444'; // Red for low coverage
+          else if (cases < 50) return '#f97316'; // Orange for medium coverage
+          else if (cases < 75) return '#eab308'; // Yellow for good coverage
+          else return '#22c55e'; // Green for high coverage
+        } else if (cases <= 100000) {
+          // For disease case counts (like meningitis)
+          if (cases < 100) return '#22c55e'; // Green for low cases
+          else if (cases < 1000) return '#eab308'; // Yellow for medium cases
+          else if (cases < 10000) return '#f97316'; // Orange for high cases
+          else return '#ef4444'; // Red for very high cases
+        } else {
+          // For large numbers (like COVID) - original logic
+          if (cases < 10000) return '#22c55e';
+          else if (cases < 100000) return '#eab308';
+          else if (cases < 1000000) return '#f97316';
+          else if (cases < 5000000) return '#ef4444';
+          else return '#991b1b';
+        }
       }}
       pointLabel={(d) => {
         return `
@@ -82,7 +137,8 @@ const GlobeVisualization: React.FC<GlobeVisualizationProps> = ({ countries, onCo
       onPointClick={(d) => {
         onCountryClick(d);
       }}
-    />
+      />
+    </div>
   );
 };
 

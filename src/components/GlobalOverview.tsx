@@ -1,14 +1,79 @@
 import React from 'react';
 import { GlobalData } from '../types';
+import { Disease } from './DiseaseSelector';
 
 interface Props {
   globalData: GlobalData | null;
+  selectedDisease?: Disease | null;
 }
 
-const GlobalOverview: React.FC<Props> = ({ globalData }) => {
+const GlobalOverview: React.FC<Props> = ({ globalData, selectedDisease }) => {
   if (!globalData) {
     return <div>Loading...</div>;
   }
+
+  // Get appropriate labels based on disease type
+  const getLabelsForDisease = () => {
+    if (selectedDisease?.code === 'HIV_ARTCOVERAGE') {
+      return {
+        metric1: 'People in Treatment',
+        metric2: 'Highest Country Treatment', 
+        metric3: 'Average per Country',
+        metric4: 'Countries with Data',
+        suffix1: '',
+        suffix2: '',
+        suffix3: '',
+        suffix4: ''
+      };
+    } else if (selectedDisease?.source === 'covid') {
+      return {
+        metric1: 'Total Cases',
+        metric2: 'Total Deaths',
+        metric3: 'Total Recovered', 
+        metric4: 'Active Cases',
+        suffix1: '',
+        suffix2: '',
+        suffix3: '',
+        suffix4: ''
+      };
+    } else if (selectedDisease?.code?.startsWith('MENING_')) {
+      return {
+        metric1: 'Total Cases',
+        metric2: 'Not Available',
+        metric3: 'Not Available',
+        metric4: 'Countries Affected',
+        suffix1: '',
+        suffix2: '',
+        suffix3: '',
+        suffix4: ''
+      };
+    } else if (selectedDisease?.code?.startsWith('TB_')) {
+      return {
+        metric1: 'Total Incidence',
+        metric2: 'Not Available',
+        metric3: 'Not Available',
+        metric4: 'Countries Affected',
+        suffix1: ' per 100k',
+        suffix2: '',
+        suffix3: '',
+        suffix4: ''
+      };
+    } else {
+      // Default for other WHO diseases (case counts)
+      return {
+        metric1: 'Total Cases',
+        metric2: 'Not Available',
+        metric3: 'Not Available',
+        metric4: 'Countries Affected',
+        suffix1: '',
+        suffix2: '',
+        suffix3: '',
+        suffix4: ''
+      };
+    }
+  };
+
+  const labels = getLabelsForDisease();
 
   return (
     <div style={{
@@ -24,27 +89,37 @@ const GlobalOverview: React.FC<Props> = ({ globalData }) => {
         fontWeight: '600',
         marginBottom: '1rem',
         color: '#f8fafc'
-      }}>Global Overview</h2>
+      }}>
+        {selectedDisease?.name || 'Global'} Overview
+      </h2>
       <div style={{
         display: 'grid',
         gridTemplateColumns: 'repeat(2, 1fr)',
         gap: '1rem'
       }}>
         <div>
-          <p style={{ color: '#94a3b8', fontSize: '0.875rem', marginBottom: '0.25rem' }}>Total Cases</p>
-          <p style={{ fontSize: '1.5rem', fontWeight: '700', color: '#fbbf24' }}>{globalData.cases.toLocaleString()}</p>
+          <p style={{ color: '#94a3b8', fontSize: '0.875rem', marginBottom: '0.25rem' }}>{labels.metric1}</p>
+          <p style={{ fontSize: '1.5rem', fontWeight: '700', color: '#fbbf24' }}>
+            {globalData.cases.toLocaleString()}{labels.suffix1}
+          </p>
         </div>
         <div>
-          <p style={{ color: '#94a3b8', fontSize: '0.875rem', marginBottom: '0.25rem' }}>Total Deaths</p>
-          <p style={{ fontSize: '1.5rem', fontWeight: '700', color: '#ef4444' }}>{globalData.deaths.toLocaleString()}</p>
+          <p style={{ color: '#94a3b8', fontSize: '0.875rem', marginBottom: '0.25rem' }}>{labels.metric2}</p>
+          <p style={{ fontSize: '1.5rem', fontWeight: '700', color: '#ef4444' }}>
+            {globalData.deaths.toLocaleString()}{labels.suffix2}
+          </p>
         </div>
         <div>
-          <p style={{ color: '#94a3b8', fontSize: '0.875rem', marginBottom: '0.25rem' }}>Total Recovered</p>
-          <p style={{ fontSize: '1.5rem', fontWeight: '700', color: '#10b981' }}>{globalData.recovered.toLocaleString()}</p>
+          <p style={{ color: '#94a3b8', fontSize: '0.875rem', marginBottom: '0.25rem' }}>{labels.metric3}</p>
+          <p style={{ fontSize: '1.5rem', fontWeight: '700', color: '#10b981' }}>
+            {globalData.recovered.toLocaleString()}{labels.suffix3}
+          </p>
         </div>
         <div>
-          <p style={{ color: '#94a3b8', fontSize: '0.875rem', marginBottom: '0.25rem' }}>Active Cases</p>
-          <p style={{ fontSize: '1.5rem', fontWeight: '700', color: '#f59e0b' }}>{globalData.active.toLocaleString()}</p>
+          <p style={{ color: '#94a3b8', fontSize: '0.875rem', marginBottom: '0.25rem' }}>{labels.metric4}</p>
+          <p style={{ fontSize: '1.5rem', fontWeight: '700', color: '#f59e0b' }}>
+            {globalData.active.toLocaleString()}{labels.suffix4}
+          </p>
         </div>
       </div>
     </div>
