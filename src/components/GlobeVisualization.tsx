@@ -32,7 +32,14 @@ const GlobeVisualization: React.FC<GlobeVisualizationProps> = ({ countries, onCo
     updateDimensions();
 
     if (globeEl.current) {
-      globeEl.current.pointOfView({ lat: 20, lng: 0, altitude: 2.5 });
+      // Set initial view with 23.4° tilt (Earth's axial tilt)
+      globeEl.current.pointOfView({ lat: 23.4, lng: 0, altitude: 2.5 });
+      
+      // Add smooth rotation
+      globeEl.current.controls().autoRotate = true;
+      globeEl.current.controls().autoRotateSpeed = 0.5; // Slow rotation
+      globeEl.current.controls().enableDamping = true;
+      globeEl.current.controls().dampingFactor = 0.01;
     }
 
     return () => {

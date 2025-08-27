@@ -233,6 +233,9 @@ function App() {
 
   return (
     <div className="app">
+      {/* Starfield Background */}
+      <div className="starfield"></div>
+      
       {/* Modern Header */}
       <header className={`app-header ${(isModalOpen || comparisonModalOpen) ? 'dimmed' : ''}`}>
         <h1 className="app-title">
@@ -279,6 +282,31 @@ function App() {
             }}
             selectedDisease={selectedDisease}
           />
+          
+          {/* Information Panels in Sidebar */}
+          {selectedDisease && currentData.globalData && (
+            <div className="sidebar-panels">
+              <div className="sidebar-panel">
+                <GlobalOverview 
+                  globalData={currentData.globalData} 
+                  selectedDisease={selectedDisease} 
+                />
+              </div>
+              
+              {diseaseData.selectedCountry && (
+                <div className="sidebar-panel">
+                  <CountryDashboard country={diseaseData.selectedCountry} />
+                </div>
+              )}
+              
+              <div className="sidebar-panel">
+                <CountryComparison 
+                  countries={currentData.countries} 
+                  onOpenComparison={handleOpenComparison} 
+                />
+              </div>
+            </div>
+          )}
         </div>
       </div>
 
@@ -317,35 +345,11 @@ function App() {
           </div>
         ) : (
           <div className="dashboard fade-in">
-            <div className="dashboard-main">
-              <div className="globe-container">
-                <GlobeVisualization 
-                  countries={currentData.countries} 
-                  onCountryClick={handleCountryClick} 
-                />
-              </div>
-              
-              <div className="dashboard-panels slide-in-right">
-                <div className="dashboard-panel">
-                  <GlobalOverview 
-                    globalData={currentData.globalData} 
-                    selectedDisease={selectedDisease} 
-                  />
-                </div>
-                
-                {diseaseData.selectedCountry && (
-                  <div className="dashboard-panel">
-                    <CountryDashboard country={diseaseData.selectedCountry} />
-                  </div>
-                )}
-                
-                <div className="dashboard-panel">
-                  <CountryComparison 
-                    countries={currentData.countries} 
-                    onOpenComparison={handleOpenComparison} 
-                  />
-                </div>
-              </div>
+            <div className="globe-container">
+              <GlobeVisualization 
+                countries={currentData.countries} 
+                onCountryClick={handleCountryClick} 
+              />
             </div>
           </div>
         )}
