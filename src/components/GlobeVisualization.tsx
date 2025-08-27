@@ -51,6 +51,8 @@ const GlobeVisualization: React.FC<GlobeVisualizationProps> = ({ countries, onCo
         pointsMerge={true}
         pointResolution={8}
         enablePointerInteraction={true}
+        showGlobe={true}
+        showAtmosphere={true}
       pointLat={(d: any) => {
         if (!d.countryInfo || typeof d.countryInfo.lat === 'undefined') {
           console.error('Invalid country data for latitude:', d);
@@ -121,40 +123,15 @@ const GlobeVisualization: React.FC<GlobeVisualizationProps> = ({ countries, onCo
         }
       }}
       pointLabel={(d: any) => {
-        console.log('Point label for:', d);
+        console.log('Tooltip called for:', d);
+        const country = d.country || 'Unknown Country';
+        const cases = d.cases || 0;
         const isCovid = d.countryInfo && d.countryInfo.iso2 && d.continent;
         
         if (isCovid) {
-          // COVID data format
-          return `
-            <div style="
-              background: rgba(0, 0, 0, 0.8);
-              color: white;
-              padding: 12px;
-              border-radius: 8px;
-              font-family: 'Inter', sans-serif;
-              box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
-              max-width: 200px;
-            ">
-              <div style="font-weight: bold; font-size: 14px; margin-bottom: 8px; color: #fca5a5;">${d.country}</div>
-              <div style="font-size: 12px; margin-bottom: 4px;">📊 Cases: <span style="color: #fbbf24;">${d.cases.toLocaleString()}</span></div>
-              <div style="font-size: 12px; margin-bottom: 4px;">💀 Deaths: <span style="color: #ef4444;">${d.deaths.toLocaleString()}</span></div>
-              <div style="font-size: 12px; margin-bottom: 4px;">✅ Recovered: <span style="color: #10b981;">${d.recovered.toLocaleString()}</span></div>
-              <div style="font-size: 10px; color: #9ca3af; margin-top: 8px; text-align: center;">Click for details</div>
-            </div>
-          `;
+          return `${country}<br/>Cases: ${cases.toLocaleString()}<br/>Deaths: ${d.deaths.toLocaleString()}<br/>Click for details`;
         } else {
-          // WHO data format - simplified to ensure it works
-          const countryName = d.country || d.countryName || 'Unknown Country';
-          const value = d.cases || 0;
-          const countryCode = d.countryInfo?.iso2 || d.countryCode || 'N/A';
-          
-          return `<div style="background: rgba(0,0,0,0.8); color: white; padding: 10px; border-radius: 6px; font-family: Arial;">
-            <b>${countryName}</b><br/>
-            Value: ${value.toLocaleString()}<br/>
-            Code: ${countryCode}<br/>
-            <small>Click for details</small>
-          </div>`;
+          return `${country}<br/>Value: ${cases.toLocaleString()}<br/>Click for details`;
         }
       }}
       onPointClick={(d: any, event: any) => {

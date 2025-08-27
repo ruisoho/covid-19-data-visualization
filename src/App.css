@@ -49,6 +49,22 @@ body {
   background-clip: text;
 }
 
+/* Globe tooltip fixes */
+.scene-tooltip {
+  z-index: 9999 !important;
+  position: absolute !important;
+  pointer-events: none !important;
+  background: rgba(0, 0, 0, 0.9) !important;
+  color: white !important;
+  padding: 8px 12px !important;
+  border-radius: 6px !important;
+  font-size: 12px !important;
+  font-family: 'Inter', sans-serif !important;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3) !important;
+  max-width: 200px !important;
+  word-wrap: break-word !important;
+}
+
 .header-stats {
   display: flex;
   align-items: center;
