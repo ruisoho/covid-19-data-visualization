@@ -70,14 +70,20 @@ class WHOApiService {
 
   async getDiseaseData(disease: Disease): Promise<WHOCountryData[]> {
     try {
+      console.log(`Fetching WHO data for ${disease.name} from ${disease.source}`);
+      
       if (disease.source === 'who-gho') {
         // For WHO GHO API via backend proxy
         const response = await axios.get(`${this.backendBaseURL}/data/${disease.code}`);
-        return response.data.value || response.data || [];
+        console.log(`WHO API response for ${disease.code}:`, response.data);
+        const data = response.data.value || response.data || [];
+        console.log(`Processed data type: ${Array.isArray(data) ? 'array' : typeof data}, length: ${Array.isArray(data) ? data.length : 'N/A'}`);
+        return Array.isArray(data) ? data : [];
       } else if (disease.source === 'who-outbreaks') {
         // For WHO Outbreaks API via backend proxy
         const response = await axios.get(`${this.backendBaseURL}/outbreaks`);
-        return response.data.value || response.data || [];
+        const data = response.data.value || response.data || [];
+        return Array.isArray(data) ? data : [];
       }
       return [];
     } catch (error) {
@@ -301,6 +307,12 @@ class WHOApiService {
 
   async processWHOData(rawData: WHOCountryData[]): Promise<ProcessedDiseaseData[]> {
     const processedData: ProcessedDiseaseData[] = [];
+
+    // Ensure rawData is an array
+    if (!Array.isArray(rawData)) {
+      console.error('WHO API returned non-array data:', rawData);
+      return [];
+    }
 
     // Group data by country - only include COUNTRY data, not regions or global
     const countryMap = new Map<string, WHOCountryData[]>();
