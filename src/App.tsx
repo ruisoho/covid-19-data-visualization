@@ -38,9 +38,12 @@ function App() {
   }, []);
 
   const handleCountryClick = (country: Country) => {
+    console.log('Country clicked:', country);
     setModalCountry(country);
     setIsModalOpen(true);
-    if (country.countryInfo.iso2) {
+    
+    // Try to get country code for history fetching (works for COVID data)
+    if (selectedDisease?.source === 'covid' && country.countryInfo?.iso2) {
       fetchCountryHistory(country.countryInfo.iso2);
     }
   };

@@ -41,7 +41,7 @@ const GlobeVisualization: React.FC<GlobeVisualizationProps> = ({ countries, onCo
   }, []);
 
   return (
-    <div ref={containerRef} style={{ width: '100%', height: '100%' }}>
+    <div ref={containerRef} style={{ width: '100%', height: '100%', cursor: 'pointer' }}>
       <Globe
         ref={globeEl}
         width={globeWidth}
@@ -134,7 +134,8 @@ const GlobeVisualization: React.FC<GlobeVisualizationProps> = ({ countries, onCo
           </div>
         `;
       }}
-      onPointClick={(d: any) => {
+      onPointClick={(d: any, event: any) => {
+        console.log('Globe point clicked:', d, event);
         onCountryClick(d as Country);
       }}
       />
