@@ -37,7 +37,7 @@ const GlobeVisualization: React.FC<GlobeVisualizationProps> = ({ countries, onCo
       
       // Add smooth rotation
       globeEl.current.controls().autoRotate = true;
-      globeEl.current.controls().autoRotateSpeed = 0.5; // Slow rotation
+      globeEl.current.controls().autoRotateSpeed = 0.2; // Much slower rotation
       globeEl.current.controls().enableDamping = true;
       globeEl.current.controls().dampingFactor = 0.01;
     }
@@ -54,6 +54,7 @@ const GlobeVisualization: React.FC<GlobeVisualizationProps> = ({ countries, onCo
         width={globeWidth}
         height={globeHeight}
         globeImageUrl="//unpkg.com/three-globe/example/img/earth-blue-marble.jpg"
+        backgroundImageUrl="//unpkg.com/three-globe/example/img/night-sky.png"
         pointsData={countries}
         pointLat={(d: any) => d.countryInfo?.lat || 0}
         pointLng={(d: any) => d.countryInfo?.long || 0}

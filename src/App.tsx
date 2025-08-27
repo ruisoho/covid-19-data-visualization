@@ -233,9 +233,6 @@ function App() {
 
   return (
     <div className="app">
-      {/* Starfield Background */}
-      <div className="starfield"></div>
-      
       {/* Modern Header */}
       <header className={`app-header ${(isModalOpen || comparisonModalOpen) ? 'dimmed' : ''}`}>
         <h1 className="app-title">
@@ -282,31 +279,6 @@ function App() {
             }}
             selectedDisease={selectedDisease}
           />
-          
-          {/* Information Panels in Sidebar */}
-          {selectedDisease && currentData.globalData && (
-            <div className="sidebar-panels">
-              <div className="sidebar-panel">
-                <GlobalOverview 
-                  globalData={currentData.globalData} 
-                  selectedDisease={selectedDisease} 
-                />
-              </div>
-              
-              {diseaseData.selectedCountry && (
-                <div className="sidebar-panel">
-                  <CountryDashboard country={diseaseData.selectedCountry} />
-                </div>
-              )}
-              
-              <div className="sidebar-panel">
-                <CountryComparison 
-                  countries={currentData.countries} 
-                  onOpenComparison={handleOpenComparison} 
-                />
-              </div>
-            </div>
-          )}
         </div>
       </div>
 
@@ -350,6 +322,29 @@ function App() {
                 countries={currentData.countries} 
                 onCountryClick={handleCountryClick} 
               />
+              
+              {/* Floating Information Panels */}
+              <div className="floating-panels">
+                <div className="floating-panel floating-panel-top">
+                  <GlobalOverview 
+                    globalData={currentData.globalData} 
+                    selectedDisease={selectedDisease} 
+                  />
+                </div>
+                
+                {diseaseData.selectedCountry && (
+                  <div className="floating-panel floating-panel-middle">
+                    <CountryDashboard country={diseaseData.selectedCountry} />
+                  </div>
+                )}
+                
+                <div className="floating-panel floating-panel-bottom">
+                  <CountryComparison 
+                    countries={currentData.countries} 
+                    onOpenComparison={handleOpenComparison} 
+                  />
+                </div>
+              </div>
             </div>
           </div>
         )}
