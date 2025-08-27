@@ -1,7 +1,17 @@
 import axios from 'axios';
 import { Country, GlobalData, HistoricalData } from '../types';
 
-const BASE_URL = import.meta.env.VITE_API_BASE_URL || (import.meta.env.PROD ? '/api' : 'http://localhost:3002/api');
+// Force production API URL when deployed
+const BASE_URL = import.meta.env.PROD 
+  ? '/api' 
+  : (import.meta.env.VITE_API_BASE_URL || 'http://localhost:3002/api');
+
+console.log('Environment:', {
+  PROD: import.meta.env.PROD,
+  MODE: import.meta.env.MODE,
+  BASE_URL,
+  VITE_API_BASE_URL: import.meta.env.VITE_API_BASE_URL
+});
 
 class CovidApiService {
   private api = axios.create({
