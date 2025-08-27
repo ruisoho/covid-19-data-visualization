@@ -2,6 +2,9 @@
 
 An advanced interactive 3D globe visualization platform for tracking multiple global diseases with real-time statistics, country-specific dashboards, and comprehensive health data integration.
 
+##Live Demo:
+https://world-diseases-tracker.vercel.app/
+
 ## ✨ Features
 
 ### 🦠 **Multi-Disease Support**
