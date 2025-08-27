@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useMemo } from 'react';
 import './App.css';
 import { useCovidData } from './hooks/useCovidData';
 import GlobalOverview from './components/GlobalOverview';
@@ -19,7 +19,6 @@ function App() {
   const [comparisonModalOpen, setComparisonModalOpen] = useState(false);
   const [selectedCountriesForComparison, setSelectedCountriesForComparison] = useState<string[]>([]);
   const [selectedDisease, setSelectedDisease] = useState<Disease | null>(null);
-  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [diseaseData, setDiseaseData] = useState<{
     globalData: any;
     countries: Country[];
@@ -220,15 +219,14 @@ function App() {
     }
   };
 
-  const toggleMobileMenu = () => {
-    setMobileMenuOpen(!mobileMenuOpen);
-  };
 
-  const currentData = selectedDisease ? diseaseData : {
-    globalData: covidGlobalData,
-    countries: covidCountries,
-    loading: covidLoading
-  };
+  const currentData = useMemo(() => 
+    selectedDisease ? diseaseData : {
+      globalData: covidGlobalData,
+      countries: covidCountries,
+      loading: covidLoading
+    }, [selectedDisease, diseaseData, covidGlobalData, covidCountries, covidLoading]
+  );
 
 
   return (
@@ -261,35 +259,6 @@ function App() {
         )}
       </header>
 
-      {/* Floating Disease Selector Sidebar */}
-      <div className={`disease-selector-sidebar slide-in-left ${
-        (isModalOpen || comparisonModalOpen) ? 'hidden' : ''
-      } ${mobileMenuOpen ? 'mobile-open' : ''}`}>
-        <div className="sidebar-header">
-          <h3 className="sidebar-title">Select Disease to Track</h3>
-          <p className="sidebar-subtitle">
-            Choose from global health datasets to explore on the interactive globe
-          </p>
-        </div>
-        <div className="sidebar-content">
-          <DiseaseSelector 
-            onDiseaseSelect={(disease) => {
-              handleDiseaseSelect(disease);
-              setMobileMenuOpen(false);
-            }}
-            selectedDisease={selectedDisease}
-          />
-        </div>
-      </div>
-
-      {/* Mobile Toggle Button */}
-      <button 
-        className="mobile-toggle"
-        onClick={toggleMobileMenu}
-        aria-label="Toggle disease selector"
-      >
-        {mobileMenuOpen ? '✕' : '🦠'}
-      </button>
 
       {/* Main Content */}
       <main className="main-container">
@@ -300,20 +269,23 @@ function App() {
               Explore Global Health Data
             </h2>
             <p className="welcome-subtitle">
-              Track diseases worldwide with interactive visualizations. Select a disease from the sidebar to begin exploring real-time health data across the globe.
+              Track diseases worldwide with interactive visualizations. Select a disease from the floating panel to begin exploring real-time health data across the globe.
             </p>
-            <button 
+            <div 
               className="welcome-cta"
-              onClick={() => setMobileMenuOpen(true)}
+              onClick={() => handleDiseaseSelect({
+                id: 'covid-19',
+                name: 'COVID-19',
+                code: 'COVID19',
+                description: 'Coronavirus Disease 2019',
+                source: 'covid',
+                color: '#ef4444',
+                icon: '🦠'
+              })}
             >
-              <span>🦠</span>
-              Get Started
-            </button>
-          </div>
-        ) : currentData.loading ? (
-          <div className="loading-spinner fade-in">
-            <div className="spinner"></div>
-            <p>Loading {selectedDisease.name} data...</p>
+              <span>Click Here To:</span>
+              🦠 Select a disease from the floating panel to begin exploring
+            </div>
           </div>
         ) : (
           <div className="dashboard fade-in">
@@ -323,7 +295,25 @@ function App() {
                 onCountryClick={handleCountryClick} 
               />
               
-              {/* Floating Information Panels */}
+              {/* Floating Disease Selector Panel - Left Side */}
+              <div className="floating-disease-selector">
+                <div className="floating-panel floating-panel-selector">
+                  <div className="selector-header">
+                    <h3 className="selector-title">🦠 Select Disease to Track</h3>
+                    <p className="selector-subtitle">
+                      Choose from global health datasets to explore
+                    </p>
+                  </div>
+                  <div className="selector-content">
+                    <DiseaseSelector 
+                      onDiseaseSelect={handleDiseaseSelect}
+                      selectedDisease={selectedDisease}
+                    />
+                  </div>
+                </div>
+              </div>
+
+              {/* Floating Information Panels - Right Side */}
               <div className="floating-panels">
                 <div className="floating-panel floating-panel-top">
                   <GlobalOverview 

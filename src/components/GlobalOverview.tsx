@@ -9,7 +9,38 @@ interface Props {
 
 const GlobalOverview: React.FC<Props> = ({ globalData, selectedDisease }) => {
   if (!globalData) {
-    return <div>Loading...</div>;
+    return (
+      <div style={{
+        background: 'rgba(30, 41, 59, 0.8)',
+        padding: '1.5rem',
+        borderRadius: '12px',
+        marginBottom: '1.5rem',
+        border: '1px solid rgba(255, 255, 255, 0.1)',
+        backdropFilter: 'blur(10px)',
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'center',
+        minHeight: '120px'
+      }}>
+        <div style={{
+          display: 'flex',
+          flexDirection: 'column',
+          alignItems: 'center',
+          gap: '0.5rem',
+          color: '#94a3b8'
+        }}>
+          <div className="spinner" style={{
+            width: '20px',
+            height: '20px',
+            border: '2px solid rgba(255, 255, 255, 0.1)',
+            borderTop: '2px solid #3b82f6',
+            borderRadius: '50%',
+            animation: 'spin 1s linear infinite'
+          }}></div>
+          <span style={{ fontSize: '0.875rem' }}>Loading {selectedDisease?.name || 'disease'} data...</span>
+        </div>
+      </div>
+    );
   }
 
   // Get appropriate labels based on disease type
@@ -97,27 +128,27 @@ const GlobalOverview: React.FC<Props> = ({ globalData, selectedDisease }) => {
         gridTemplateColumns: 'repeat(2, 1fr)',
         gap: '1rem'
       }}>
-        <div>
-          <p style={{ color: '#94a3b8', fontSize: '0.875rem', marginBottom: '0.25rem' }}>{labels.metric1}</p>
-          <p style={{ fontSize: '1.5rem', fontWeight: '700', color: '#fbbf24' }}>
+        <div style={{ overflow: 'hidden', textOverflow: 'ellipsis' }}>
+          <p style={{ color: '#94a3b8', fontSize: '0.875rem', marginBottom: '0.25rem', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>{labels.metric1}</p>
+          <p style={{ fontSize: '1.5rem', fontWeight: '700', color: '#fbbf24', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
             {globalData.cases.toLocaleString()}{labels.suffix1}
           </p>
         </div>
-        <div>
-          <p style={{ color: '#94a3b8', fontSize: '0.875rem', marginBottom: '0.25rem' }}>{labels.metric2}</p>
-          <p style={{ fontSize: '1.5rem', fontWeight: '700', color: '#ef4444' }}>
+        <div style={{ overflow: 'hidden', textOverflow: 'ellipsis' }}>
+          <p style={{ color: '#94a3b8', fontSize: '0.875rem', marginBottom: '0.25rem', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>{labels.metric2}</p>
+          <p style={{ fontSize: '1.5rem', fontWeight: '700', color: '#ef4444', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
             {globalData.deaths.toLocaleString()}{labels.suffix2}
           </p>
         </div>
-        <div>
-          <p style={{ color: '#94a3b8', fontSize: '0.875rem', marginBottom: '0.25rem' }}>{labels.metric3}</p>
-          <p style={{ fontSize: '1.5rem', fontWeight: '700', color: '#10b981' }}>
+        <div style={{ overflow: 'hidden', textOverflow: 'ellipsis' }}>
+          <p style={{ color: '#94a3b8', fontSize: '0.875rem', marginBottom: '0.25rem', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>{labels.metric3}</p>
+          <p style={{ fontSize: '1.5rem', fontWeight: '700', color: '#10b981', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
             {globalData.recovered.toLocaleString()}{labels.suffix3}
           </p>
         </div>
-        <div>
-          <p style={{ color: '#94a3b8', fontSize: '0.875rem', marginBottom: '0.25rem' }}>{labels.metric4}</p>
-          <p style={{ fontSize: '1.5rem', fontWeight: '700', color: '#f59e0b' }}>
+        <div style={{ overflow: 'hidden', textOverflow: 'ellipsis' }}>
+          <p style={{ color: '#94a3b8', fontSize: '0.875rem', marginBottom: '0.25rem', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>{labels.metric4}</p>
+          <p style={{ fontSize: '1.5rem', fontWeight: '700', color: '#f59e0b', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
             {globalData.active.toLocaleString()}{labels.suffix4}
           </p>
         </div>

@@ -93,6 +93,9 @@ const CountryComparison: React.FC<CountryComparisonProps> = ({ countries, onOpen
                   opacity: selectedCountries.length >= 5 && !selectedCountries.includes(country.countryInfo.iso2)
                     ? 0.5
                     : 1,
+                  whiteSpace: 'nowrap',
+                  overflow: 'hidden',
+                  textOverflow: 'ellipsis'
                 }}
                 disabled={selectedCountries.length >= 5 && !selectedCountries.includes(country.countryInfo.iso2)}
                 onMouseEnter={(e) => {
@@ -131,10 +134,19 @@ const CountryComparison: React.FC<CountryComparisonProps> = ({ countries, onOpen
                   color: '#93c5fd',
                   display: 'flex',
                   alignItems: 'center',
-                  gap: '0.5rem'
+                  gap: '0.5rem',
+                  maxWidth: '100%',
+                  overflow: 'hidden'
                 }}
               >
-                {getCountryName(countryCode)}
+                <span style={{ 
+                  whiteSpace: 'nowrap', 
+                  overflow: 'hidden', 
+                  textOverflow: 'ellipsis',
+                  maxWidth: 'calc(100% - 20px)'
+                }}>
+                  {getCountryName(countryCode)}
+                </span>
                 <button
                   onClick={() => removeCountry(countryCode)}
                   style={{

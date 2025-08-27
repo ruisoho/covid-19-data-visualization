@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect, useRef, useMemo } from 'react';
 import Globe from 'react-globe.gl';
 import { Country } from '../types';
 
@@ -12,7 +12,9 @@ const GlobeVisualization: React.FC<GlobeVisualizationProps> = ({ countries, onCo
   const containerRef = useRef<HTMLDivElement>(null);
   const [globeWidth, setGlobeWidth] = useState(800);
   const [globeHeight, setGlobeHeight] = useState(600);
+  const [isGlobeInitialized, setIsGlobeInitialized] = useState(false);
 
+  // Initialize globe settings only once
   useEffect(() => {
     const updateDimensions = () => {
       if (containerRef.current) {
@@ -31,7 +33,14 @@ const GlobeVisualization: React.FC<GlobeVisualizationProps> = ({ countries, onCo
     // Initial dimension update
     updateDimensions();
 
-    if (globeEl.current) {
+    return () => {
+      window.removeEventListener('resize', handleResize);
+    };
+  }, []);
+
+  // Initialize globe settings only once after first render
+  useEffect(() => {
+    if (globeEl.current && !isGlobeInitialized) {
       // Set initial view with 23.4° tilt (Earth's axial tilt)
       globeEl.current.pointOfView({ lat: 23.4, lng: 0, altitude: 2.5 });
       
@@ -40,12 +49,22 @@ const GlobeVisualization: React.FC<GlobeVisualizationProps> = ({ countries, onCo
       globeEl.current.controls().autoRotateSpeed = 0.2; // Much slower rotation
       globeEl.current.controls().enableDamping = true;
       globeEl.current.controls().dampingFactor = 0.01;
+      
+      setIsGlobeInitialized(true);
     }
+  }, [isGlobeInitialized]);
 
-    return () => {
-      window.removeEventListener('resize', handleResize);
-    };
-  }, []);
+  // Memoize countries data to reduce unnecessary updates, handle loading state
+  const memoizedCountries = useMemo(() => {
+    // Return empty array if countries is null/undefined or still loading
+    return Array.isArray(countries) ? countries : [];
+  }, [countries]);
+  
+  // Memoize static globe configuration
+  const staticGlobeConfig = useMemo(() => ({
+    globeImageUrl: "//unpkg.com/three-globe/example/img/earth-blue-marble.jpg",
+    backgroundImageUrl: "//unpkg.com/three-globe/example/img/night-sky.png"
+  }), []);
 
   return (
     <div ref={containerRef} style={{ width: '100%', height: '100%', cursor: 'pointer' }}>
@@ -53,20 +72,23 @@ const GlobeVisualization: React.FC<GlobeVisualizationProps> = ({ countries, onCo
         ref={globeEl}
         width={globeWidth}
         height={globeHeight}
-        globeImageUrl="//unpkg.com/three-globe/example/img/earth-blue-marble.jpg"
-        backgroundImageUrl="//unpkg.com/three-globe/example/img/night-sky.png"
-        pointsData={countries}
+        {...staticGlobeConfig}
+        pointsData={memoizedCountries}
         pointLat={(d: any) => d.countryInfo?.lat || 0}
         pointLng={(d: any) => d.countryInfo?.long || 0}
-        pointAltitude={(d: any) => {
+        animateIn={false}
+        pointAltitude={useMemo(() => (d: any) => {
           const isCovid = d.countryInfo && d.countryInfo.iso2 && d.continent;
           return isCovid ? 0.05 : 0.08; // WHO diseases slightly taller
-        }}
-        pointRadius={(d: any) => {
+        }, [])}
+        pointRadius={useMemo(() => (d: any) => {
           const isCovid = d.countryInfo && d.countryInfo.iso2 && d.continent;
           return isCovid ? 0.3 : 0.5; // WHO diseases larger
-        }}
-        pointColor={(d: any) => {
+        }, [])}
+        pointColor={useMemo(() => (d: any) => {
+          // Handle case where data might be loading or unavailable
+          if (!d || (!d.countryInfo && !d.cases)) return '#64748b'; // Gray for loading/no data
+          
           const isCovid = d.countryInfo && d.countryInfo.iso2 && d.continent;
           if (isCovid) {
             // COVID gradient colors based on case severity
@@ -84,7 +106,7 @@ const GlobeVisualization: React.FC<GlobeVisualizationProps> = ({ countries, onCo
             if (cases > 50) return '#60a5fa'; // Light blue
             return '#93c5fd'; // Very light blue
           }
-        }}
+        }, [])}
         pointLabel={(d: any) => {
           const country = d.country || 'Unknown';
           const cases = d.cases || 0;
@@ -178,4 +200,4 @@ const GlobeVisualization: React.FC<GlobeVisualizationProps> = ({ countries, onCo
   );
 };
 
-export default GlobeVisualization;
+export default React.memo(GlobeVisualization);
