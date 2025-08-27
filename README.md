@@ -1,4 +1,4 @@
-# 🌍 Global Disease Tracker
+# 🌍 World Disease Tracker
 
 An advanced interactive 3D globe visualization platform for tracking multiple global diseases with real-time statistics, country-specific dashboards, and comprehensive health data integration.
 
