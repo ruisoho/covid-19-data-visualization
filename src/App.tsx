@@ -81,6 +81,8 @@ function App() {
         const whoRawData = await whoApiService.getDiseaseData(disease);
         const processedData = await whoApiService.processWHOData(whoRawData);
         
+        console.log('Processed WHO data sample:', processedData.slice(0, 3));
+        
         // Convert WHO data to Country format for globe visualization
         const whoCountries: Country[] = processedData.map(data => ({
           country: data.country,

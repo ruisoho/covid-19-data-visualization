@@ -65,29 +65,33 @@ const GlobeVisualization: React.FC<GlobeVisualizationProps> = ({ countries, onCo
         return d.countryInfo.long;
       }}
       pointAltitude={(d: any) => {
-        // Adaptive scaling based on data range
-        if (d.cases <= 100) {
-          // For percentage data (like HIV coverage)
-          return Math.max(0.02, Math.sqrt(d.cases) / 200);
-        } else if (d.cases <= 100000) {
-          // For disease case counts (like meningitis)
-          return Math.max(0.02, Math.sqrt(d.cases) / 2000);
+        // Determine if this is COVID data
+        const isCovid = d.countryInfo && d.countryInfo.iso2 && d.continent;
+        
+        if (isCovid) {
+          // Smaller altitude for COVID data
+          return Math.max(0.01, Math.sqrt(d.cases) / 1000000);
+        } else if (d.cases <= 100) {
+          // For percentage data (like HIV coverage) - larger
+          return Math.max(0.04, Math.sqrt(d.cases) / 100);
         } else {
-          // For large numbers (like COVID)
-          return Math.max(0.02, Math.sqrt(d.cases) / 850000);
+          // For disease case counts (like meningitis) - larger
+          return Math.max(0.04, Math.sqrt(d.cases) / 1000);
         }
       }}
       pointRadius={(d: any) => {
-        // Adaptive scaling based on data range
-        if (d.cases <= 100) {
-          // For percentage data (like HIV coverage)
-          return Math.max(0.15, Math.sqrt(d.cases) / 20);
-        } else if (d.cases <= 100000) {
-          // For disease case counts (like meningitis)
-          return Math.max(0.15, Math.sqrt(d.cases) / 100);
+        // Determine if this is COVID data
+        const isCovid = d.countryInfo && d.countryInfo.iso2 && d.continent;
+        
+        if (isCovid) {
+          // Smaller radius for COVID data
+          return Math.max(0.1, Math.sqrt(d.cases) / 6000);
+        } else if (d.cases <= 100) {
+          // For percentage data (like HIV coverage) - larger
+          return Math.max(0.25, Math.sqrt(d.cases) / 15);
         } else {
-          // For large numbers (like COVID)
-          return Math.max(0.020, Math.sqrt(d.cases) / 4000);
+          // For disease case counts (like meningitis) - larger
+          return Math.max(0.25, Math.sqrt(d.cases) / 50);
         }
       }}
       pointColor={(d: any) => {
@@ -116,23 +120,46 @@ const GlobeVisualization: React.FC<GlobeVisualizationProps> = ({ countries, onCo
         }
       }}
       pointLabel={(d: any) => {
-        return `
-          <div style="
-            background: rgba(0, 0, 0, 0.8);
-            color: white;
-            padding: 12px;
-            border-radius: 8px;
-            font-family: 'Inter', sans-serif;
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
-            max-width: 200px;
-          ">
-            <div style="font-weight: bold; font-size: 14px; margin-bottom: 8px; color: #fca5a5;">${d.country}</div>
-            <div style="font-size: 12px; margin-bottom: 4px;">📊 Cases: <span style="color: #fbbf24;">${d.cases.toLocaleString()}</span></div>
-            <div style="font-size: 12px; margin-bottom: 4px;">💀 Deaths: <span style="color: #ef4444;">${d.deaths.toLocaleString()}</span></div>
-            <div style="font-size: 12px; margin-bottom: 4px;">✅ Recovered: <span style="color: #10b981;">${d.recovered.toLocaleString()}</span></div>
-            <div style="font-size: 10px; color: #9ca3af; margin-top: 8px; text-align: center;">Click for details</div>
-          </div>
-        `;
+        const isCovid = d.countryInfo && d.countryInfo.iso2 && d.continent;
+        
+        if (isCovid) {
+          // COVID data format
+          return `
+            <div style="
+              background: rgba(0, 0, 0, 0.8);
+              color: white;
+              padding: 12px;
+              border-radius: 8px;
+              font-family: 'Inter', sans-serif;
+              box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+              max-width: 200px;
+            ">
+              <div style="font-weight: bold; font-size: 14px; margin-bottom: 8px; color: #fca5a5;">${d.country}</div>
+              <div style="font-size: 12px; margin-bottom: 4px;">📊 Cases: <span style="color: #fbbf24;">${d.cases.toLocaleString()}</span></div>
+              <div style="font-size: 12px; margin-bottom: 4px;">💀 Deaths: <span style="color: #ef4444;">${d.deaths.toLocaleString()}</span></div>
+              <div style="font-size: 12px; margin-bottom: 4px;">✅ Recovered: <span style="color: #10b981;">${d.recovered.toLocaleString()}</span></div>
+              <div style="font-size: 10px; color: #9ca3af; margin-top: 8px; text-align: center;">Click for details</div>
+            </div>
+          `;
+        } else {
+          // WHO data format
+          return `
+            <div style="
+              background: rgba(0, 0, 0, 0.8);
+              color: white;
+              padding: 12px;
+              border-radius: 8px;
+              font-family: 'Inter', sans-serif;
+              box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+              max-width: 200px;
+            ">
+              <div style="font-weight: bold; font-size: 14px; margin-bottom: 8px; color: #fca5a5;">${d.country || d.countryName || 'Unknown'}</div>
+              <div style="font-size: 12px; margin-bottom: 4px;">📊 Value: <span style="color: #fbbf24;">${d.cases.toLocaleString()}</span></div>
+              <div style="font-size: 11px; color: #9ca3af; margin-bottom: 4px;">Country Code: ${d.countryInfo?.iso2 || d.countryCode || 'N/A'}</div>
+              <div style="font-size: 10px; color: #9ca3af; margin-top: 8px; text-align: center;">Click for details</div>
+            </div>
+          `;
+        }
       }}
       onPointClick={(d: any, event: any) => {
         console.log('Globe point clicked:', d, event);
