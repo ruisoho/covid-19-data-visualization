@@ -50,6 +50,7 @@ const GlobeVisualization: React.FC<GlobeVisualizationProps> = ({ countries, onCo
         pointsData={countries}
         pointsMerge={true}
         pointResolution={8}
+        enablePointerInteraction={true}
       pointLat={(d: any) => {
         if (!d.countryInfo || typeof d.countryInfo.lat === 'undefined') {
           console.error('Invalid country data for latitude:', d);
@@ -69,14 +70,14 @@ const GlobeVisualization: React.FC<GlobeVisualizationProps> = ({ countries, onCo
         const isCovid = d.countryInfo && d.countryInfo.iso2 && d.continent;
         
         if (isCovid) {
-          // Smaller altitude for COVID data
-          return Math.max(0.01, Math.sqrt(d.cases) / 1000000);
+          // COVID data altitude - doubled
+          return Math.max(0.02, Math.sqrt(d.cases) / 500000);
         } else if (d.cases <= 100) {
-          // For percentage data (like HIV coverage) - larger
-          return Math.max(0.04, Math.sqrt(d.cases) / 100);
+          // For percentage data (like HIV coverage) - doubled
+          return Math.max(0.08, Math.sqrt(d.cases) / 50);
         } else {
-          // For disease case counts (like meningitis) - larger
-          return Math.max(0.04, Math.sqrt(d.cases) / 1000);
+          // For disease case counts (like meningitis) - doubled
+          return Math.max(0.08, Math.sqrt(d.cases) / 500);
         }
       }}
       pointRadius={(d: any) => {
@@ -84,14 +85,14 @@ const GlobeVisualization: React.FC<GlobeVisualizationProps> = ({ countries, onCo
         const isCovid = d.countryInfo && d.countryInfo.iso2 && d.continent;
         
         if (isCovid) {
-          // Smaller radius for COVID data
-          return Math.max(0.1, Math.sqrt(d.cases) / 6000);
+          // COVID data radius - doubled
+          return Math.max(0.2, Math.sqrt(d.cases) / 3000);
         } else if (d.cases <= 100) {
-          // For percentage data (like HIV coverage) - larger
-          return Math.max(0.25, Math.sqrt(d.cases) / 15);
+          // For percentage data (like HIV coverage) - doubled
+          return Math.max(0.5, Math.sqrt(d.cases) / 8);
         } else {
-          // For disease case counts (like meningitis) - larger
-          return Math.max(0.25, Math.sqrt(d.cases) / 50);
+          // For disease case counts (like meningitis) - doubled
+          return Math.max(0.5, Math.sqrt(d.cases) / 25);
         }
       }}
       pointColor={(d: any) => {
@@ -120,6 +121,7 @@ const GlobeVisualization: React.FC<GlobeVisualizationProps> = ({ countries, onCo
         }
       }}
       pointLabel={(d: any) => {
+        console.log('Point label for:', d);
         const isCovid = d.countryInfo && d.countryInfo.iso2 && d.continent;
         
         if (isCovid) {
@@ -142,23 +144,17 @@ const GlobeVisualization: React.FC<GlobeVisualizationProps> = ({ countries, onCo
             </div>
           `;
         } else {
-          // WHO data format
-          return `
-            <div style="
-              background: rgba(0, 0, 0, 0.8);
-              color: white;
-              padding: 12px;
-              border-radius: 8px;
-              font-family: 'Inter', sans-serif;
-              box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
-              max-width: 200px;
-            ">
-              <div style="font-weight: bold; font-size: 14px; margin-bottom: 8px; color: #fca5a5;">${d.country || d.countryName || 'Unknown'}</div>
-              <div style="font-size: 12px; margin-bottom: 4px;">📊 Value: <span style="color: #fbbf24;">${d.cases.toLocaleString()}</span></div>
-              <div style="font-size: 11px; color: #9ca3af; margin-bottom: 4px;">Country Code: ${d.countryInfo?.iso2 || d.countryCode || 'N/A'}</div>
-              <div style="font-size: 10px; color: #9ca3af; margin-top: 8px; text-align: center;">Click for details</div>
-            </div>
-          `;
+          // WHO data format - simplified to ensure it works
+          const countryName = d.country || d.countryName || 'Unknown Country';
+          const value = d.cases || 0;
+          const countryCode = d.countryInfo?.iso2 || d.countryCode || 'N/A';
+          
+          return `<div style="background: rgba(0,0,0,0.8); color: white; padding: 10px; border-radius: 6px; font-family: Arial;">
+            <b>${countryName}</b><br/>
+            Value: ${value.toLocaleString()}<br/>
+            Code: ${countryCode}<br/>
+            <small>Click for details</small>
+          </div>`;
         }
       }}
       onPointClick={(d: any, event: any) => {
