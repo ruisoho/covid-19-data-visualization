@@ -27,7 +27,8 @@ class FlagService {
 
     try {
       // Use a more efficient endpoint that only returns country info
-      const response = await axios.get('http://localhost:3002/api/countries', {
+      const apiUrl = import.meta.env.PROD ? '/api/countries' : 'http://localhost:3002/api/countries';
+      const response = await axios.get(apiUrl, {
         timeout: 5000, // 5 second timeout
         headers: {
           'Accept': 'application/json',

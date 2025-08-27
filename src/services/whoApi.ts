@@ -56,7 +56,7 @@ export interface ProcessedDiseaseData {
 }
 
 class WHOApiService {
-  private backendBaseURL = 'http://localhost:3002/api/who';
+  private backendBaseURL = import.meta.env.PROD ? '/api/who' : 'http://localhost:3002/api/who';
 
   async getIndicators(): Promise<WHOIndicator[]> {
     try {
