@@ -1,7 +1,4 @@
 {
-  "engines": {
-    "node": "18.x"
-  },
   "functions": {
     "api/**/*.ts": {
       "runtime": "@vercel/node@3.0.0"
