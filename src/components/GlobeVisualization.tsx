@@ -53,7 +53,11 @@ const GlobeVisualization: React.FC<GlobeVisualizationProps> = ({ countries, onCo
         pointAltitude={0.1}
         pointRadius={0.5}
         pointColor={() => '#ff6b6b'}
-        pointLabel={(d: any) => d.country}
+        pointLabel={(d: any) => {
+          const country = d.country || 'Unknown';
+          const cases = d.cases || 0;
+          return `${country}\nCases: ${cases.toLocaleString()}`;
+        }}
         onPointClick={onCountryClick}
       />
     </div>
