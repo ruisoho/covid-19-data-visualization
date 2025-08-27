@@ -299,7 +299,7 @@ class WHOApiService {
     return coordinates[countryCode] || { lat: 0, lng: 0 };
   }
 
-  async processWHOData(rawData: WHOCountryData[], disease: Disease): Promise<ProcessedDiseaseData[]> {
+  async processWHOData(rawData: WHOCountryData[]): Promise<ProcessedDiseaseData[]> {
     const processedData: ProcessedDiseaseData[] = [];
 
     // Group data by country - only include COUNTRY data, not regions or global

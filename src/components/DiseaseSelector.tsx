@@ -12,7 +12,7 @@ export interface Disease {
 
 interface DiseaseSelectorProps {
   onDiseaseSelect: (disease: Disease) => void;
-  selectedDisease?: Disease;
+  selectedDisease?: Disease | null;
 }
 
 const DiseaseSelector: React.FC<DiseaseSelectorProps> = ({ onDiseaseSelect, selectedDisease }) => {

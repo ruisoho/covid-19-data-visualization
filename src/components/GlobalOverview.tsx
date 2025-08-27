@@ -4,7 +4,7 @@ import { Disease } from './DiseaseSelector';
 
 interface Props {
   globalData: GlobalData | null;
-  selectedDisease?: Disease | null;
+  selectedDisease?: Disease | undefined;
 }
 
 const GlobalOverview: React.FC<Props> = ({ globalData, selectedDisease }) => {

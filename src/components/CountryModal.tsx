@@ -1,14 +1,13 @@
 import React from 'react';
-import { Country, HistoricalData } from '../types';
+import { Country } from '../types';
 
 interface Props {
   country: Country | null;
-  historicalData: HistoricalData | null;
   isOpen: boolean;
   onClose: () => void;
 }
 
-const CountryModal: React.FC<Props> = ({ country, historicalData, isOpen, onClose }) => {
+const CountryModal: React.FC<Props> = ({ country, isOpen, onClose }) => {
   if (!isOpen || !country) return null;
 
   return (

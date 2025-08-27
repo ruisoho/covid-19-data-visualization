@@ -42,29 +42,29 @@ const GlobeVisualization: React.FC<GlobeVisualizationProps> = ({ countries, onCo
 
   return (
     <div ref={containerRef} style={{ width: '100%', height: '100%' }}>
-      <Globe<Country>
+      <Globe
         ref={globeEl}
         width={globeWidth}
         height={globeHeight}
         globeImageUrl="//unpkg.com/three-globe/example/img/earth-blue-marble.jpg"
         pointsData={countries}
-        pointMerge={true}
+        pointsMerge={true}
         pointResolution={8}
-      pointLat={(d) => {
+      pointLat={(d: any) => {
         if (!d.countryInfo || typeof d.countryInfo.lat === 'undefined') {
           console.error('Invalid country data for latitude:', d);
           return 0;
         }
         return d.countryInfo.lat;
       }}
-      pointLng={(d) => {
+      pointLng={(d: any) => {
         if (!d.countryInfo || typeof d.countryInfo.long === 'undefined') {
           console.error('Invalid country data for longitude:', d);
           return 0;
         }
         return d.countryInfo.long;
       }}
-      pointAltitude={(d) => {
+      pointAltitude={(d: any) => {
         // Adaptive scaling based on data range
         if (d.cases <= 100) {
           // For percentage data (like HIV coverage)
@@ -77,7 +77,7 @@ const GlobeVisualization: React.FC<GlobeVisualizationProps> = ({ countries, onCo
           return Math.max(0.02, Math.sqrt(d.cases) / 850000);
         }
       }}
-      pointRadius={(d) => {
+      pointRadius={(d: any) => {
         // Adaptive scaling based on data range
         if (d.cases <= 100) {
           // For percentage data (like HIV coverage)
@@ -90,7 +90,7 @@ const GlobeVisualization: React.FC<GlobeVisualizationProps> = ({ countries, onCo
           return Math.max(0.020, Math.sqrt(d.cases) / 4000);
         }
       }}
-      pointColor={(d) => {
+      pointColor={(d: any) => {
         const cases = d.cases;
         
         // Adaptive color scheme based on data range
@@ -115,7 +115,7 @@ const GlobeVisualization: React.FC<GlobeVisualizationProps> = ({ countries, onCo
           else return '#991b1b';
         }
       }}
-      pointLabel={(d) => {
+      pointLabel={(d: any) => {
         return `
           <div style="
             background: rgba(0, 0, 0, 0.8);
@@ -134,8 +134,8 @@ const GlobeVisualization: React.FC<GlobeVisualizationProps> = ({ countries, onCo
           </div>
         `;
       }}
-      onPointClick={(d) => {
-        onCountryClick(d);
+      onPointClick={(d: any) => {
+        onCountryClick(d as Country);
       }}
       />
     </div>

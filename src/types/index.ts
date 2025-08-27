@@ -16,6 +16,16 @@ export interface Country {
   tests: number;
   population: number;
   continent: string;
+  casesPerOneMillion?: number;
+  deathsPerOneMillion?: number;
+  testsPerOneMillion?: number;
+  oneCasePerPeople?: number;
+  oneDeathPerPeople?: number;
+  oneTestPerPeople?: number;
+  activePerOneMillion?: number;
+  recoveredPerOneMillion?: number;
+  criticalPerOneMillion?: number;
+  updated?: number;
 }
 
 export interface GlobalData {

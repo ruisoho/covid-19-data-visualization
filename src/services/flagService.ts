@@ -43,7 +43,7 @@ class FlagService {
       }));
 
       // Populate cache for quick lookups
-      this.countriesCache.forEach(country => {
+      this.countriesCache?.forEach(country => {
         if (country.iso2) {
           this.flagCache.set(country.iso2, country.flag);
           this.nameCache.set(country.iso2, country.name);
@@ -54,7 +54,7 @@ class FlagService {
         }
       });
 
-      return this.countriesCache;
+      return this.countriesCache || [];
     } catch (error) {
       console.error('Error fetching country flags:', error);
       return [];

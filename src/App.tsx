@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import './App.css';
 import { useCovidData } from './hooks/useCovidData';
 import GlobalOverview from './components/GlobalOverview';
@@ -76,7 +76,7 @@ function App() {
       try {
         // Fetch WHO data with optimized processing
         const whoRawData = await whoApiService.getDiseaseData(disease);
-        const processedData = await whoApiService.processWHOData(whoRawData, disease);
+        const processedData = await whoApiService.processWHOData(whoRawData);
         
         // Convert WHO data to Country format for globe visualization
         const whoCountries: Country[] = processedData.map(data => ({
@@ -97,6 +97,7 @@ function App() {
           activePerOneMillion: 0,
           recoveredPerOneMillion: 0,
           criticalPerOneMillion: 0,
+          continent: 'Unknown', // WHO data doesn't include continent info
           countryInfo: {
             _id: 0,
             iso2: data.countryCode,
