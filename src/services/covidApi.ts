@@ -1,7 +1,7 @@
 import axios from 'axios';
 import { Country, GlobalData, HistoricalData } from '../types';
 
-const BASE_URL = 'http://localhost:3002/api';
+const BASE_URL = import.meta.env.VITE_API_BASE_URL || 'http://localhost:3002/api';
 
 class CovidApiService {
   private api = axios.create({
