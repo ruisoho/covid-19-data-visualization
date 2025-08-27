@@ -4,7 +4,8 @@
       "WebSearch",
       "WebFetch(domain:ghoapi.azureedge.net)",
       "WebFetch(domain:www.who.int)",
-      "Bash(curl:*)"
+      "Bash(curl:*)",
+      "Bash(git add:*)"
     ],
     "deny": [],
     "ask": []
